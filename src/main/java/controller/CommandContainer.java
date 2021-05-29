@@ -23,6 +23,7 @@ public class CommandContainer {
         commands.put("view_unapproved", new ViewUnapproved());
         commands.put("approve", new ApproveCommand());
         commands.put("sort_by", new SortByCommand());
+        commands.put("edit_timelog", new EditTimeLogCommand());
         commands.put("delete_activity", new DeleteActivityCommand());
         commands.put("delete_user", new DeleteUserCommand());
         commands.put("logout", new LogOutCommand());

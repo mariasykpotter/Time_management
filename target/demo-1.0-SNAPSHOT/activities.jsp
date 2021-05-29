@@ -36,6 +36,9 @@
                     <a class="nav-link" href="add_activity.jsp">Add activity</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" href="edit_timelogs.jsp">Timelogs</a>
+                </li>
+                <li class="nav-item">
                     <form action="/controller" method="post">
                         <button class="btn btn-primary" type="submit">Log out</button>
                         <input type="hidden" name="command" value="logout">

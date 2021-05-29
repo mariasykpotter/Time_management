@@ -1,12 +1,16 @@
 package com.example.demo.dao;
 
 import controller.AddLogCommand;
+import model.Approve;
 
 import java.util.List;
 
 public class TestDBManager {
     public static void main(String[] args) {
-        System.out.println(TimeLogDao.getInfoAboutUser());
+        System.out.println(ActivitiesDao.getAllActivities());
+//        System.out.println(ActivitiesDao.getIdByName("вело"));
+        //System.out.println(TimeLogDao.getAllTimeLogsInfo());
+//        System.out.println(TimeLogDao.getInfoAboutUser());
 //        System.out.println(TimeLogDao.getOrderedQuantityPerActivity());
 //        List<List<String>> activities = ActivitiesDao.getOrderedActivitiesWithCategory(Constants.ACTIVITY_NAME);
 //        System.out.println(activities);

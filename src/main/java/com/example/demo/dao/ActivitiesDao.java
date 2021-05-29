@@ -15,8 +15,26 @@ public class ActivitiesDao {
     private static final String QUERY3 = "DELETE FROM ACTIVITY WHERE id=?";
     private static final String QUERY4 = "INSERT INTO ACTIVITY VALUES(DEFAULT,?,?)";
     private static final String QUERY5 = QUERY1 + " ORDER BY ";
+    private static final String QUERY6 = "SELECT id from ACTIVITY WHERE ACTIVITY_NAME = ?";
+    private static final String QUERY7 = "SELECT * from ACTIVITY";
+
 
     private ActivitiesDao() {
+    }
+
+    public static List<Activity> getAllActivities() {
+        ActivityMapper activityMapper = new ActivitiesDao.ActivityMapper();
+        List<Activity> lst = new ArrayList<>();
+        try (Connection con = dbm.getConnection();
+             Statement st = con.createStatement();
+             ResultSet rs = st.executeQuery(QUERY7)) {
+            while (rs.next()) {
+                lst.add(activityMapper.mapRow(rs));
+            }
+        } catch (SQLException throwables) {
+            LOGGER.error(throwables.getMessage());
+        }
+        return lst;
     }
 
     public static List<List<String>> getAllActivitiesWithCategory() {
@@ -64,6 +82,24 @@ public class ActivitiesDao {
         }
         return activity;
     }
+
+    public static int getIdByName(String name) {
+        ResultSet rs = null;
+        try (Connection con = dbm.getConnection();
+             PreparedStatement pstmt = con.prepareStatement(QUERY6)) {
+            pstmt.setString(1, name);
+            rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(Constants.ENTITY_ID);
+            }
+        } catch (SQLException throwables) {
+            LOGGER.error(throwables.getMessage());
+        } finally {
+            DBManager.close(rs);
+        }
+        return 0;
+    }
+
 
     public static boolean addActivity(String activityName, int categoryId) {
         Connection con = null;

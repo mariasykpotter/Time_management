@@ -23,19 +23,6 @@ public class AddLogCommand extends Command {
     private static final String MESSAGE = "End time should be after start time";
     private static final long serialVersionUID = 3122281700814233499L;
 
-    public static float countDifference(String time1, String time2) {
-        SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
-        Date date1 = null;
-        Date date2 = null;
-        try {
-            date1 = format.parse(time1);
-            date2 = format.parse(time2);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return (float) ((date2.getTime() - date1.getTime()) / (60 * 1000 * 60.0));
-    }
-
     public static boolean validateTime(String time1, String time2) {
         Pattern p = Pattern.compile("(\\d{2}):(\\d{2}):(\\d{2})");
         Matcher m1 = p.matcher(time1);
@@ -55,7 +42,7 @@ public class AddLogCommand extends Command {
         String time1 = request.getParameter("start") + ":00";
         String time2 = request.getParameter("end") + ":00";
         if (validateTime(time1, time2)) {
-            TimeLogDao.addTimeLog(user.getId(), activity.getId(), Time.valueOf(time1), Time.valueOf(time2), countDifference(time1, time2));
+            TimeLogDao.addTimeLog(user.getId(), activity.getId(), Time.valueOf(time1), Time.valueOf(time2), TimeLogDao.countDifference(time1, time2));
             logger.info("Time log added");
             logger.debug("Command Write finished");
             return "activities.jsp";

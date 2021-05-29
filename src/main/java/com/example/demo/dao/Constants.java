@@ -16,6 +16,10 @@ public class Constants {
     public static final String CATEGORY_NAME = "category_name";
 
     public static final String ACTIVITY_ID = "activity_id";
+    public static final String START_AT = "start_at";
+    public static final String END_AT = "end_at";
+    public static final String DURATION = "duration";
+    public static final String STATUS = "status";
     public static final String TIME_LOG_NUMBER = "TIME_LOG_NUMBER";
     public static final String SUM_DURATION = "SUM_DURATION";
     public static final String COUNT = "COUNT";
