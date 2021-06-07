@@ -17,7 +17,6 @@ public class NoCommand extends Command {
     public String execute(HttpServletRequest request,
                           HttpServletResponse response) throws IOException, ServletException {
         log.debug("Command starts");
-
         String errorMessage = "No such command";
         request.setAttribute("errorMessage", errorMessage);
         log.error("Set the request attribute: errorMessage --> " + errorMessage);

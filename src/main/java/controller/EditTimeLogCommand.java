@@ -12,8 +12,8 @@ import java.sql.Time;
 public class EditTimeLogCommand extends Command {
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        TimeLogDao.updateTimeLog(Integer.valueOf(request.getParameter("activity")), Time.valueOf(request.getParameter("start_at")),
+        TimeLogDao.updateTimeLog(ActivitiesDao.getIdByName(request.getParameter("activity")), Time.valueOf(request.getParameter("start_at")),
                 Time.valueOf(request.getParameter("end_at")), Integer.valueOf(request.getParameter("log_id")));
-        return "edit_timelogs.jsp";
+        return "/WEB-INF/edit_timelogs.jsp";
     }
 }

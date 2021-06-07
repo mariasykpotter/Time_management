@@ -1,6 +1,8 @@
 package controller;
 
 import com.example.demo.dao.ActivitiesDao;
+import com.example.demo.dao.Constants;
+import com.example.demo.dao.HashProcessor;
 import com.example.demo.dao.PersonDao;
 import model.Person;
 import model.Role;
@@ -37,8 +39,7 @@ public class LoginCommand extends Command {
 
         Person user = PersonDao.getUserByLogin(login);
         log.trace("Found in DB: user --> " + user);
-
-        if (user == null || !password.equals(user.getPassword())) {
+        if (user == null || !HashProcessor.validatePassword(password, user.getPassword())) {
             errorMessage = "Cannot find user with such login/password";
             request.setAttribute("errorMessage", errorMessage);
             log.error("errorMessage --> " + errorMessage);
@@ -47,13 +48,13 @@ public class LoginCommand extends Command {
             Role userRole = Role.getRole(user);
             log.trace("userRole --> " + userRole);
             if (userRole == Role.ADMIN) {
-                session.setAttribute("activities_list", ActivitiesDao.getAllActivitiesWithCategory());
-                forward = "admin.jsp";
+                session.setAttribute("activities_list", ActivitiesDao.getAllActivitiesWithCategory(null));
+                forward = "/WEB-INF/admin.jsp";
             }
 
             if (userRole == Role.CLIENT) {
-                session.setAttribute("activities_list", ActivitiesDao.getAllActivitiesWithCategory());
-                forward = "activities.jsp";
+                session.setAttribute("activities_list", ActivitiesDao.getAllActivitiesWithCategory(Constants.ACTIVITY_NAME));
+                forward = "/WEB-INF/activities.jsp";
             }
 
             session.setAttribute("user", user);

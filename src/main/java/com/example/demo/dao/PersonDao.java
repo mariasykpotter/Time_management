@@ -25,7 +25,7 @@ public class PersonDao {
             pstmt.setString(2, person.getLastName());
             pstmt.setString(3, person.getUserName());
             pstmt.setInt(4, person.getRoleId());
-            pstmt.setString(5, person.getPassword());
+            pstmt.setString(5, HashProcessor.generateStrongPasswordHash(person.getPassword()));
             if (pstmt.executeUpdate() > 0) {
                 try (ResultSet rs = pstmt.getGeneratedKeys()) {
                     if (rs.next()) {
@@ -35,6 +35,7 @@ public class PersonDao {
                 }
             }
         } catch (SQLException throwables) {
+            System.out.println(throwables);
             LOGGER.error(throwables.getMessage());
         }
         return person;
@@ -57,11 +58,15 @@ public class PersonDao {
         return person;
     }
 
-    public static void deletePerson(int userId) {
+    public static void deletePerson(int[] idList) {
+        int n = idList.length;
+        String QUERY7 = "DELETE FROM PERSON WHERE id IN (" + DBManager.repeat(n - 1, "?,") + "?)";
         ResultSet rs = null;
         try (Connection con = dbm.getConnection();
-             PreparedStatement pstmt = con.prepareStatement(DELETE_QUERY)) {
-            pstmt.setInt(1, userId);
+             PreparedStatement pstmt = con.prepareStatement(QUERY7)) {
+            for (int i = 1; i <= n; i++) {
+                pstmt.setInt(i, idList[i - 1]);
+            }
             rs = pstmt.executeQuery();
         } catch (SQLException throwables) {
             LOGGER.error(throwables.getMessage());

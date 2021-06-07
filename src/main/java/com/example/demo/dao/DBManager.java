@@ -32,6 +32,9 @@ public class DBManager {
         }
     }
 
+    public static String repeat(int count, String with) {
+        return new String(new char[count]).replace("\0", with);
+    }
 
     static void close(AutoCloseable ac) {
         if (ac != null) {

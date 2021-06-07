@@ -11,10 +11,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.Time;
-import java.text.DecimalFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -45,13 +41,13 @@ public class AddLogCommand extends Command {
             TimeLogDao.addTimeLog(user.getId(), activity.getId(), Time.valueOf(time1), Time.valueOf(time2), TimeLogDao.countDifference(time1, time2));
             logger.info("Time log added");
             logger.debug("Command Write finished");
-            return "activities.jsp";
+            return "/WEB-INF/activities.jsp";
         } else {
             logger.info("Error occurred");
-            session.setAttribute("message", MESSAGE);
+            request.setAttribute("message", MESSAGE);
             logger.trace("Set the session attribute: message --> " + MESSAGE);
             logger.debug("Command Write finished");
-            return "write.jsp";
+            return "/WEB-INF/write.jsp";
         }
     }
 }

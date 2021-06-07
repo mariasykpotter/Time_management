@@ -10,8 +10,10 @@ import java.util.List;
 public class CategoryDao {
     private static final Logger LOGGER = Logger.getLogger(CategoryDao.class);
     private static DBManager dbm = DBManager.getInstance();
-    private static String QUERY1 = "SELECT * FROM CATEGORY";
+    private static String QUERY1 = "SELECT * FROM CATEGORY ORDER BY category_name";
     private static String QUERY2 = "INSERT INTO CATEGORY VALUES(DEFAULT,?)";
+    private static String QUERY3 = "DELETE FROM CATEGORY WHERE id=?";
+    private static String QUERY4 = "UPDATE CATEGORY SET CATEGORY_NAME=? WHERE id=?";
 
     private CategoryDao() {
     }
@@ -46,6 +48,7 @@ public class CategoryDao {
                 }
             }
         } catch (SQLException throwables) {
+            System.out.println(throwables.getMessage());
             LOGGER.error(throwables.getMessage());
             return false;
         } finally {
@@ -54,6 +57,23 @@ public class CategoryDao {
             DBManager.close(con);
         }
         return false;
+    }
+
+    public static void deleteCategory(int[] idList) {
+        int n = idList.length;
+        String QUERY7 = "DELETE FROM CATEGORY WHERE id IN (" + DBManager.repeat(n - 1, "?,") + "?)";
+        ResultSet rs = null;
+        try (Connection con = dbm.getConnection();
+             PreparedStatement pstmt = con.prepareStatement(QUERY7)) {
+            for (int i = 1; i <= n; i++) {
+                pstmt.setInt(i, idList[i - 1]);
+            }
+            rs = pstmt.executeQuery();
+        } catch (SQLException throwables) {
+            LOGGER.error(throwables.getMessage());
+        } finally {
+            DBManager.close(rs);
+        }
     }
 
 
@@ -69,6 +89,20 @@ public class CategoryDao {
             } catch (SQLException e) {
                 throw new IllegalStateException(e);
             }
+        }
+    }
+
+    public static void updateCategory(int categoryId, String categoryName) {
+        ResultSet rs = null;
+        try (Connection con = dbm.getConnection();
+             PreparedStatement pstmt = con.prepareStatement(QUERY4)) {
+            pstmt.setString(1, categoryName);
+            pstmt.setInt(2, categoryId);
+            rs = pstmt.executeQuery();
+        } catch (SQLException throwables) {
+            LOGGER.error(throwables.getMessage());
+        } finally {
+            DBManager.close(rs);
         }
     }
 

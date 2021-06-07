@@ -1,10 +1,8 @@
 package controller;
 
-
 import com.example.demo.dao.PersonDao;
 import model.Person;
 import model.Role;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -22,13 +20,13 @@ public class RegisterCommand extends Command {
             Role role = (Role) session.getAttribute("userRole");
             if (role == Role.ADMIN) {
                 PersonDao.insertPerson(new Person(fullName[1], fullName[0], userName, role.ordinal(), password));
-                return "view_users.jsp";
+                return "/WEB-INF/view_users.jsp";
             } else {
                 PersonDao.insertPerson(new Person(fullName[1], fullName[0], userName, Role.CLIENT.ordinal(), password));
-                return "index.jsp";
+                return "/WEB-INF/index.jsp";
             }
         } else {
-            return "registration.jsp";
+            return "WEB-INF/registration.jsp";
         }
     }
 }

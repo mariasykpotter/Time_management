@@ -14,34 +14,27 @@ public class ActivitiesDao {
     private static final String QUERY2 = "SELECT * FROM ACTIVITY WHERE id=?";
     private static final String QUERY3 = "DELETE FROM ACTIVITY WHERE id=?";
     private static final String QUERY4 = "INSERT INTO ACTIVITY VALUES(DEFAULT,?,?)";
-    private static final String QUERY5 = QUERY1 + " ORDER BY ";
-    private static final String QUERY6 = "SELECT id from ACTIVITY WHERE ACTIVITY_NAME = ?";
-    private static final String QUERY7 = "SELECT * from ACTIVITY";
-
+    private static final String QUERY5 = "SELECT A.activity_name,B.category_name,A.id FROM ACTIVITY A INNER JOIN \n" +
+            "CATEGORY B ON A.category_id=B.id WHERE B.category_name=?";
+    private static final String QUERY6 = "SELECT * FROM ACTIVITY WHERE activity_name=?";
+    private static final String QUERY8 = "SELECT COUNT(id) FROM ACTIVITY";
 
     private ActivitiesDao() {
     }
 
-    public static List<Activity> getAllActivities() {
-        ActivityMapper activityMapper = new ActivitiesDao.ActivityMapper();
-        List<Activity> lst = new ArrayList<>();
-        try (Connection con = dbm.getConnection();
-             Statement st = con.createStatement();
-             ResultSet rs = st.executeQuery(QUERY7)) {
-            while (rs.next()) {
-                lst.add(activityMapper.mapRow(rs));
-            }
-        } catch (SQLException throwables) {
-            LOGGER.error(throwables.getMessage());
-        }
-        return lst;
-    }
 
-    public static List<List<String>> getAllActivitiesWithCategory() {
+
+    public static List<List<String>> getAllActivitiesWithCategory(String orderParameter) {
+        String query;
+        if (orderParameter != null) {
+            query = QUERY1 + " ORDER BY " + orderParameter;
+        } else {
+            query = QUERY1;
+        }
         List<List<String>> lst = new ArrayList<>();
         try (Connection con = dbm.getConnection();
              Statement st = con.createStatement();
-             ResultSet rs = st.executeQuery(QUERY1)) {
+             ResultSet rs = st.executeQuery(query)) {
             while (rs.next()) {
                 lst.add(new ArrayList<>(Arrays.asList(rs.getString(Constants.ACTIVITY_NAME), rs.getString(Constants.CATEGORY_NAME), String.valueOf(rs.getInt(Constants.ENTITY_ID)))));
             }
@@ -51,11 +44,27 @@ public class ActivitiesDao {
         return lst;
     }
 
-    public static List<List<String>> getOrderedActivitiesWithCategory(String orderField) {
+    public static int getActivitiesCount() {
         List<List<String>> lst = new ArrayList<>();
         try (Connection con = dbm.getConnection();
-             Statement stmt = con.createStatement();
-             ResultSet rs = stmt.executeQuery(QUERY5 + orderField)) {
+             Statement st = con.createStatement();
+             ResultSet rs = st.executeQuery(QUERY8)) {
+            while (rs.next()) {
+                return rs.getInt(Constants.COUNT);
+            }
+        } catch (SQLException throwables) {
+            LOGGER.error(throwables.getMessage());
+        }
+        return 0;
+    }
+
+    public static List<List<String>> getAllActivitiesByCategory(String categoryName) {
+        List<List<String>> lst = new ArrayList<>();
+        ResultSet rs = null;
+        try (Connection con = dbm.getConnection();
+             PreparedStatement pstmt = con.prepareStatement(QUERY5);) {
+            pstmt.setString(1, categoryName);
+            rs = pstmt.executeQuery();
             while (rs.next()) {
                 lst.add(new ArrayList<>(Arrays.asList(rs.getString(Constants.ACTIVITY_NAME), rs.getString(Constants.CATEGORY_NAME), String.valueOf(rs.getInt(Constants.ENTITY_ID)))));
             }
@@ -65,7 +74,26 @@ public class ActivitiesDao {
         return lst;
     }
 
-    public static Activity getById(Integer id) {
+    public static Integer getIdByName(String name) {
+        Activity activity = null;
+        ResultSet rs = null;
+        try (Connection con = dbm.getConnection();
+             PreparedStatement pstmt = con.prepareStatement(QUERY6)) {
+            pstmt.setString(1, name);
+            rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("id");
+            }
+        } catch (SQLException throwables) {
+            LOGGER.error(throwables.getMessage());
+        } finally {
+            DBManager.close(rs);
+        }
+        return 0;
+    }
+
+    public static Activity getById(String str_id) {
+        int id = Integer.valueOf(str_id);
         Activity activity = null;
         ResultSet rs = null;
         try (Connection con = dbm.getConnection();
@@ -82,24 +110,6 @@ public class ActivitiesDao {
         }
         return activity;
     }
-
-    public static int getIdByName(String name) {
-        ResultSet rs = null;
-        try (Connection con = dbm.getConnection();
-             PreparedStatement pstmt = con.prepareStatement(QUERY6)) {
-            pstmt.setString(1, name);
-            rs = pstmt.executeQuery();
-            if (rs.next()) {
-                return rs.getInt(Constants.ENTITY_ID);
-            }
-        } catch (SQLException throwables) {
-            LOGGER.error(throwables.getMessage());
-        } finally {
-            DBManager.close(rs);
-        }
-        return 0;
-    }
-
 
     public static boolean addActivity(String activityName, int categoryId) {
         Connection con = null;
@@ -127,32 +137,23 @@ public class ActivitiesDao {
         return false;
     }
 
-    public static void deleteActivity(int id) {
+    public static void deleteActivity(int[] idList) {
+        for (int e : idList) {
+            System.out.println(e);
+        }
+        int n = idList.length;
+        String QUERY7 = "DELETE FROM ACTIVITY WHERE id IN (" + DBManager.repeat(n - 1, "?,") + "?)";
         ResultSet rs = null;
         try (Connection con = dbm.getConnection();
-             PreparedStatement pstmt = con.prepareStatement(QUERY3)) {
-            pstmt.setInt(1, id);
+             PreparedStatement pstmt = con.prepareStatement(QUERY7)) {
+            for (int i = 1; i <= n; i++) {
+                pstmt.setInt(i, idList[i - 1]);
+            }
             rs = pstmt.executeQuery();
         } catch (SQLException throwables) {
             LOGGER.error(throwables.getMessage());
         } finally {
             DBManager.close(rs);
-        }
-    }
-
-    private static class ActivityMapper implements EntityMapper<Activity> {
-
-        @Override
-        public Activity mapRow(ResultSet rs) {
-            try {
-                Activity activity = new Activity();
-                activity.setId(rs.getInt(Constants.ENTITY_ID));
-                activity.setActivityName(rs.getString(Constants.ACTIVITY_NAME));
-                activity.setCategoryId(rs.getInt(Constants.CATEGORY_ID));
-                return activity;
-            } catch (SQLException e) {
-                throw new IllegalStateException(e);
-            }
         }
     }
 }

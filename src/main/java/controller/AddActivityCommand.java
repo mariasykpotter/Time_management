@@ -2,6 +2,7 @@ package controller;
 
 import com.example.demo.dao.ActivitiesDao;
 import com.example.demo.dao.CategoryDao;
+import com.example.demo.dao.Constants;
 import model.Person;
 import model.Role;
 import org.apache.log4j.Logger;
@@ -24,12 +25,12 @@ public class AddActivityCommand extends Command {
         LOGGER.trace("Value of category id: " + categoryId);
         LOGGER.trace("Activity added: " + ActivitiesDao.addActivity(activityName, Integer.valueOf(categoryId)));
         HttpSession session = request.getSession();
-        session.setAttribute("activities_list", ActivitiesDao.getAllActivitiesWithCategory());
-        LOGGER.info("Set the session attribute: activities_list --> " + ActivitiesDao.getAllActivitiesWithCategory());
+        session.setAttribute("activities_list", ActivitiesDao.getAllActivitiesWithCategory(Constants.ACTIVITY_NAME));
+        LOGGER.info("Set the session attribute: activities_list --> " + ActivitiesDao.getAllActivitiesWithCategory(Constants.ACTIVITY_NAME));
         LOGGER.debug("Command finished");
         if (Role.getRole((Person) session.getAttribute("user")) == Role.ADMIN) {
-            return "admin.jsp";
+            return "/WEB-INF/admin.jsp";
         }
-        return "activities.jsp";
+        return "/WEB-INF/activities.jsp";
     }
 }

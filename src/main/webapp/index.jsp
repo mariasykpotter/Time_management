@@ -23,7 +23,7 @@
             <input type="hidden" name="command" value="login">
             <input type="submit" value="Login">
             <a href="#">Forget Password?</a><br>
-            <a href="registration.jsp">Create New Account</a>
+            <a href="WEB-INF/registration.jsp">Create New Account</a>
         </form>
     </div>
 </div>

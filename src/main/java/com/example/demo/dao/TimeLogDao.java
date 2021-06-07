@@ -32,6 +32,10 @@ public class TimeLogDao {
             "INNER JOIN ACTIVITY AS B ON A.activity_id=B.id\n" +
             "INNER JOIN CATEGORY C ON B.category_id = C.id";
     private static final String QUERY9 = "UPDATE TIME_LOG SET ACTIVITY_ID = ?, START_AT = ?, END_AT=?,DURATION=? where id=?";
+    private static final String QUERY10 = "SELECT COUNT(A.id) FROM TIME_LOG A\n" +
+            "            INNER JOIN PERSON B ON  A.user_id=B.id\n" +
+            "            INNER JOIN ACTIVITY C ON A.activity_id=C.id \n" +
+            "            INNER JOIN CATEGORY D ON C.category_id = D.id WHERE C.id=37 AND A.STATUS=0";
     private static DBManager dbm = DBManager.getInstance();
 
     private TimeLogDao() {
@@ -133,7 +137,8 @@ public class TimeLogDao {
         return lst;
     }
 
-    public static List<List<String>> getInfoByStatus(int id, int status) {
+    public static List<List<String>> getInfoByStatus(String str_id, int status) {
+        int id = Integer.valueOf(str_id);
         ResultSet rs = null;
         List<List<String>> lst = new ArrayList<>();
         try (Connection con = dbm.getConnection();
@@ -169,6 +174,20 @@ public class TimeLogDao {
             LOGGER.error(throwables.getMessage());
         }
         return lst;
+    }
+
+    public static int getNumOfUnapproved() {
+        List<List<String>> lst = new ArrayList<>();
+        try (Connection con = dbm.getConnection();
+             Statement stmt = con.createStatement();
+             ResultSet rs = stmt.executeQuery(QUERY10)) {
+            while (rs.next()) {
+                return rs.getInt("COUNT");
+            }
+        } catch (SQLException throwables) {
+            LOGGER.error(throwables.getMessage());
+        }
+        return 0;
     }
 
     public static List<List<String>> getOrderedQuantityPerActivity() {

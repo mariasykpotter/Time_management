@@ -11,10 +11,10 @@ import java.util.List;
 public class ApproveCommand extends Command {
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        int time_log_id = Integer.valueOf(request.getParameter("time_log_id"));
-        TimeLogDao.updateStatus(time_log_id);
+        String time_log_id = request.getParameter("time_log_id");
+        TimeLogDao.updateStatus(Integer.valueOf(time_log_id));
         List<List<String>> unapproved = TimeLogDao.getInfoByStatus(time_log_id, 0);
         request.setAttribute("unapproved", unapproved);
-        return "admin.jsp";
+        return "/WEB-INF/admin.jsp";
     }
 }
