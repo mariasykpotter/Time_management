@@ -14,7 +14,7 @@ public class TimeLogDao {
     private static final String QUERY2 = "INSERT INTO TIME_LOG VALUES(DEFAULT,?,?,?,?,?,0)";
     private static final String QUERY3 = "SELECT C.id ,COUNT(A.ID) AS TIME_LOG_NUMBER FROM TIME_LOG AS A\n" +
             "INNER JOIN ACTIVITY AS C ON A.activity_id=C.id WHERE C.id =? AND A.STATUS = ?  GROUP BY C.id";
-    private static final String QUERY4 = "SELECT B.FIRST_NAME, B.LAST_NAME,B.USER_NAME,C.ACTIVITY_NAME,D.CATEGORY_NAME,A.id AS PERSONID,C.id ACTIVITYID FROM TIME_LOG A\n" +
+    private static final String QUERY4 = "SELECT B.FIRST_NAME, B.LAST_NAME,B.USER_NAME,C.ACTIVITY_NAME,D.CATEGORY_NAME,A.START_AT,A.END_AT,A.id AS PERSONID,C.id ACTIVITYID FROM TIME_LOG A \n" +
             "INNER JOIN PERSON B ON  A.user_id=B.id\n" +
             "INNER JOIN ACTIVITY C ON A.activity_id=C.id \n" +
             "INNER JOIN CATEGORY D ON C.category_id = D.id WHERE C.id=? AND A.STATUS=?";
@@ -31,7 +31,7 @@ public class TimeLogDao {
     private static final String QUERY8 = "SELECT B.activity_name, C.category_name, A.start_at,A.end_at,A.duration,A.status,A.id FROM TIME_LOG AS A \n" +
             "INNER JOIN ACTIVITY AS B ON A.activity_id=B.id\n" +
             "INNER JOIN CATEGORY C ON B.category_id = C.id";
-    private static final String QUERY9 = "UPDATE TIME_LOG SET ACTIVITY_ID = ?, START_AT = ?, END_AT=?,DURATION=? where id=?";
+    private static final String QUERY9 = "UPDATE TIME_LOG SET ACTIVITY_ID = ?, START_AT = ?, END_AT=?,DURATION=?,STATUS=0 where id=?";
     private static final String QUERY10 = "SELECT COUNT(A.id) FROM TIME_LOG A\n" +
             "            INNER JOIN PERSON B ON  A.user_id=B.id\n" +
             "            INNER JOIN ACTIVITY C ON A.activity_id=C.id \n" +
@@ -149,7 +149,7 @@ public class TimeLogDao {
             while (rs.next()) {
                 List<String> newList = new ArrayList<>(Arrays.asList(rs.getString(Constants.USER_FIRST_NAME),
                         rs.getString(Constants.USER_LAST_NAME), rs.getString(Constants.USER_LOGIN), rs.getString(Constants.ACTIVITY_NAME),
-                        rs.getString(Constants.CATEGORY_NAME), String.valueOf(rs.getInt("PERSONID")), String.valueOf(rs.getInt("ACTIVITYID"))));
+                        rs.getString(Constants.CATEGORY_NAME), String.valueOf(rs.getTime(Constants.START_AT)), String.valueOf(rs.getTime(Constants.END_AT)), String.valueOf(rs.getInt("PERSONID")), String.valueOf(rs.getInt("ACTIVITYID"))));
                 lst.add(newList);
             }
         } catch (SQLException throwables) {

@@ -1,7 +1,5 @@
 package com.example.demo.dao;
 
-import model.Person;
-
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import java.math.BigInteger;

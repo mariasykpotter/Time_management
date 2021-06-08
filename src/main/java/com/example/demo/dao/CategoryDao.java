@@ -1,6 +1,6 @@
 package com.example.demo.dao;
 
-import model.Category;
+import com.example.demo.model.Category;
 import org.apache.log4j.Logger;
 
 import java.sql.*;

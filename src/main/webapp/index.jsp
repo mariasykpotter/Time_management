@@ -22,8 +22,7 @@
             <input type="password" placeholder="Password" name="password" required>
             <input type="hidden" name="command" value="login">
             <input type="submit" value="Login">
-            <a href="#">Forget Password?</a><br>
-            <a href="WEB-INF/registration.jsp">Create New Account</a>
+            <a href="/register">Create New Account</a>
         </form>
     </div>
 </div>

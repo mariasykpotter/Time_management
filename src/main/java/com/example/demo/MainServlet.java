@@ -1,7 +1,7 @@
 package com.example.demo;
 
-import controller.Command;
-import controller.CommandContainer;
+import com.example.demo.controller.Command;
+import com.example.demo.controller.CommandContainer;
 import org.apache.log4j.Logger;
 
 import java.io.*;
@@ -14,14 +14,14 @@ public class MainServlet extends HttpServlet {
     private static final Logger LOGGER = Logger.getLogger(String.valueOf(HelloServlet.class));
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        process(request, response);
+        process(request, response, "GET");
     }
 
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        process(request, response);
+        process(request, response, "POST");
     }
 
-    public void process(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    public void process(HttpServletRequest request, HttpServletResponse response, String method) throws IOException, ServletException {
         {
             response.setContentType("text/html; charset=utf-8");
             LOGGER.info("Controller starts");
@@ -44,8 +44,10 @@ public class MainServlet extends HttpServlet {
             LOGGER.info("Forward address --> " + forward);
             LOGGER.info("Controller finished, now go to forward address --> " + forward);
             // if the forward address is not null go to the address
-            if (forward != null) {
+            if (forward != null && method.equals("GET")) {
                 request.getRequestDispatcher(forward).forward(request, response);
+            } else if (forward != null) {
+                response.sendRedirect(forward);
             }
         }
     }

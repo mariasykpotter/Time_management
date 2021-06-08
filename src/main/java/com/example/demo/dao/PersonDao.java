@@ -1,7 +1,7 @@
 package com.example.demo.dao;
 
 
-import model.Person;
+import com.example.demo.model.Person;
 import org.apache.log4j.Logger;
 
 import java.sql.*;
