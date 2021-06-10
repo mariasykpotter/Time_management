@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="com.example.demo.dao.ActivitiesDao" %>
 <%@ page import="com.example.demo.dao.TimeLogDao" %>
 <%@ page import="com.example.demo.model.Approve" %>
@@ -21,23 +22,40 @@
     </script>
 </head>
 <body>
+<header>
+    <ul style="float:right; margin-right:55px; overflow:hidden">
+        <li style="list-style:none; display:inline-block; margin-right:5px">
+            <a href="/edit_timelogs?lang=uk_UA" class="ua"><img
+                    src="https://www.countryflags.io/ua/flat/32.png"></a>
+        </li>
+        <li style="list-style:none; display:inline-block">
+            <a href="/edit_timelogs?lang=en_US" class="us"><img
+                    src="https://www.countryflags.io/us/flat/32.png"></a>
+        </li>
+    </ul>
+</header>
+<c:if test="${param.lang!=null}">
+    <c:set var="locale" value="${param.lang}" scope="session"/>
+</c:if>
+<fmt:setLocale value="${sessionScope.locale}"/>
+<fmt:setBundle basename="resources" var="bundle"/>
 <div class="container">
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <form action="/activities" method="post">
-            <button class="btn btn-light mt-3 ml-3" type="submit">Back</button>
+            <button class="btn btn-light mt-3 ml-3" type="submit"><fmt:message key="back" bundle="${bundle}"/></button>
             <input type="hidden" name="command" value="activities">
         </form>
     </nav>
     <table class="table table-striped" id="time_logs">
         <thead>
         <tr>
-            <th>activityName</th>
-            <th>categoryName</th>
-            <th>startAt</th>
-            <th>endAt</th>
-            <th>duration</th>
-            <th>status</th>
-            <th>action1</th>
+            <th><fmt:message key="activity" bundle="${bundle}"/></th>
+            <th><fmt:message key="category" bundle="${bundle}"/></th>
+            <th><fmt:message key="start" bundle="${bundle}"/></th>
+            <th><fmt:message key="end" bundle="${bundle}"/></th>
+            <th><fmt:message key="duration" bundle="${bundle}"/></th>
+            <th><fmt:message key="status" bundle="${bundle}"/></th>
+            <th><fmt:message key="action" bundle="${bundle}"/></th>
         </tr>
         </thead>
         <tbody>
@@ -58,7 +76,8 @@
                     <td><c:out value="${list.get(4)}"/></td>
                     <td><c:out value="${Approve.getStatus(Integer.valueOf(list.get(5)))}"/></td>
                     <td>
-                        <button type="submit" class="btn btn-light">Edit timelog</button>
+                        <button type="submit" class="btn btn-light"><fmt:message key="edit"
+                                                                                 bundle="${bundle}"/></button>
                         <input type="hidden" value="editTimelog" name="command"/>
                         <input type="hidden" value="${list.get(6)}" name="log_id"/>
                     </td>

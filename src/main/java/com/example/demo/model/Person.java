@@ -17,11 +17,12 @@ public class Person implements Serializable {
         id = 0;
     }
 
-    public Person(String firstNam, String lastNam, String userNam,int rolId, String pass) {
+    public Person(String firstNam, String lastNam, String userNam, int rolId, String localeNam, String pass) {
         firstName = firstNam;
         lastName = lastNam;
         userName = userNam;
         roleId = rolId;
+        localeName = localeNam;
         password = pass;
     }
 

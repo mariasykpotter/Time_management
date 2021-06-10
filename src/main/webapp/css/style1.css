@@ -1,3 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Didact+Gothic&display=swap');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.css');
+
 body {
     background-image: url(../images/clock.png);
     background-size: cover;
@@ -14,6 +17,20 @@ body {
     height: 100%;
     margin: 0 auto;
 }
+
+.lang-menu ul li {
+    list-style: none;
+}
+
+/*.ua {*/
+/*    background-image: url(https://www.countryflags.io/ua/flat/32.png);*/
+/*    display: inline-block;*/
+/*}*/
+
+/*.us {*/
+/*    background-image: url(https://www.countryflags.io/us/flat/32.png);*/
+/*    display: inline-block;*/
+/*}*/
 
 
 /***********************************************

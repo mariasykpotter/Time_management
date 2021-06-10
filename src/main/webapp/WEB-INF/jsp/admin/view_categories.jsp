@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="com.example.demo.dao.CategoryDao" %>
 <html>
 <head>
@@ -18,10 +19,27 @@
     </script>
 </head>
 <body>
+<header>
+    <ul style="float:right; margin-right:55px; overflow:hidden">
+        <li style="list-style:none; display:inline-block; margin-right:5px">
+            <a href="/view_categories?lang=uk_UA" class="ua"><img
+                    src="https://www.countryflags.io/ua/flat/32.png"></a>
+        </li>
+        <li style="list-style:none; display:inline-block">
+            <a href="/view_categories?lang=en_US" class="us"><img
+                    src="https://www.countryflags.io/us/flat/32.png"></a>
+        </li>
+    </ul>
+</header>
+<c:if test="${param.lang!=null}">
+    <c:set var="locale" value="${param.lang}" scope="session"/>
+</c:if>
+<fmt:setLocale value="${sessionScope.locale}"/>
+<fmt:setBundle basename="resources" var="bundle"/>
 <div class="container">
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <form action="/admin" method="post">
-            <button class="btn btn-light mt-3 ml-3" type="submit">Back</button>
+            <button class="btn btn-light mt-3 ml-3" type="submit"><fmt:message key="back" bundle="${bundle}"/></button>
             <input type="hidden" name="command" value="admin">
         </form>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -29,13 +47,13 @@
                 <li class="nav-item">
                     <form class="form-inline mt-3" method="post" action="controller">
                         <input class="form-control mr-sm-2" type="text" name="categoryName"
-                               placeholder="Category name" required>
+                               placeholder="<fmt:message key="category" bundle="${bundle}"/>" required>
                         <input type="hidden" value="addCategory" name="command"/>
-                        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Add category</button>
+                        <button class="btn btn-outline-success my-2 my-sm-0" type="submit"><fmt:message key="navbar.add_category" bundle="${bundle}"/></button>
                     </form>
                 </li>
                 <li class="nav-item mt-3 ml-3">
-                    <input class="btn btn-primary" type="submit" form="checkbox_form" value="Delete categories"/>
+                    <input class="btn btn-primary" type="submit" form="checkbox_form" value="<fmt:message key="navbar.delete_categories" bundle="${bundle}"/>"/>
                 </li>
             </ul>
         </div>
@@ -43,9 +61,9 @@
     <table class="table table-striped" id="categories">
         <thead>
         <tr>
-            <th>categoryName</th>
-            <th>edit</th>
-            <th>delete</th>
+            <th><fmt:message key="category" bundle="${bundle}"/></th>
+            <th><fmt:message key="edit" bundle="${bundle}"/></th>
+            <th><fmt:message key="delete" bundle="${bundle}"/></th>
         </tr>
         </thead>
         <tbody>
@@ -54,7 +72,7 @@
                 <form method="post" action="controller">
                     <td><input type="text" value="${item.getCategoryName()}" name="category"/></td>
                     <td>
-                        <button type="submit" class="btn btn-light">Edit category</button>
+                        <button type="submit" class="btn btn-light"><fmt:message key="navbar.edit_category" bundle="${bundle}"/></button>
                         <input type="hidden" value="editCategory" name="command"/>
                         <input type="hidden" value="${item.getId()}" name="category_id"/>
                     </td>

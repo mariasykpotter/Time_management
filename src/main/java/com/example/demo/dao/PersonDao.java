@@ -9,7 +9,7 @@ import java.sql.*;
 
 public class PersonDao {
     private static final DBManager dbm = DBManager.getInstance();
-    private static final String INSERT_QUERY = "INSERT INTO PERSON VALUES (DEFAULT,?,?,?,?, DEFAULT, ?)";
+    private static final String INSERT_QUERY = "INSERT INTO PERSON VALUES (DEFAULT,?,?,?,?,?,?)";
     private static final String SELECT_QUERY = "SELECT * FROM PERSON WHERE user_name=?";
     private static final String DELETE_QUERY = "DELETE FROM PERSON WHERE ID=?";
     private static final Logger LOGGER = Logger.getLogger(PersonDao.class);
@@ -25,7 +25,8 @@ public class PersonDao {
             pstmt.setString(2, person.getLastName());
             pstmt.setString(3, person.getUserName());
             pstmt.setInt(4, person.getRoleId());
-            pstmt.setString(5, HashProcessor.generateStrongPasswordHash(person.getPassword()));
+            pstmt.setString(5, person.getLocaleName());
+            pstmt.setString(6, HashProcessor.generateStrongPasswordHash(person.getPassword()));
             if (pstmt.executeUpdate() > 0) {
                 try (ResultSet rs = pstmt.getGeneratedKeys()) {
                     if (rs.next()) {

@@ -13,7 +13,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.servlet.jsp.jstl.core.Config;
 import java.io.IOException;
 
 public class LoginCommand extends Command {
@@ -31,12 +30,6 @@ public class LoginCommand extends Command {
         String forward = Path.PAGE__ERROR_PAGE;
         // error handler
         String errorMessage;
-        if (login == null || password == null || login.isEmpty() || password.isEmpty()) {
-            errorMessage = "Login/password cannot be empty";
-            request.setAttribute("errorMessage", errorMessage);
-            log.error("errorMessage --> " + errorMessage);
-            return forward;
-        }
         Person user = PersonDao.getUserByLogin(login);
         if (user == null || !HashProcessor.validatePassword(password, user.getPassword())) {
             errorMessage = "Cannot find user with such login/password";
@@ -68,15 +61,15 @@ public class LoginCommand extends Command {
             // work with i18n
             String userLocaleName = user.getLocaleName();
             log.trace("userLocalName --> " + userLocaleName);
-
-            if (userLocaleName != null && !userLocaleName.isEmpty()) {
-                Config.set(session, "javax.servlet.jsp.jstl.fmt.locale", userLocaleName);
-
-                session.setAttribute("locale", userLocaleName);
-                log.trace("Set the session attribute: defaultLocaleName --> " + userLocaleName);
-
-                log.info("Locale for user: defaultLocale --> " + userLocaleName);
-            }
+//
+//            if (userLocaleName != null && !userLocaleName.isEmpty()) {
+//                Config.set(session, "javax.servlet.jsp.jstl.fmt.locale", userLocaleName);
+//
+//                session.setAttribute("locale", userLocaleName);
+//                log.trace("Set the session attribute: defaultLocaleName --> " + userLocaleName);
+//
+//                log.info("Locale for user: defaultLocale --> " + userLocaleName);
+//            }
         }
 
         log.debug("Command finished");

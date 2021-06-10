@@ -24,13 +24,16 @@ public class RegisterCommand extends Command {
             String password = request.getParameter("password");
             Role role = (Role) session.getAttribute("userRole");
             String forward;
+            LOGGER.trace(session.getAttribute("locale"));
             if (role == Role.ADMIN) {
-                PersonDao.insertPerson(new Person(fullName[1], fullName[0], userName, role.ordinal(), password));
-                LOGGER.info(String.format("Person with role %s added", role.name()));
+                if (PersonDao.insertPerson(new Person(fullName[1], fullName[0], userName, role.ordinal(), (String) session.getAttribute("locale"), password)) != null) {
+                    LOGGER.info(String.format("Person with role %s added", role.name()));
+                }
                 forward = Path.PAGE__VIEW_USERS;
             } else {
-                PersonDao.insertPerson(new Person(fullName[1], fullName[0], userName, Role.USER.ordinal(), password));
-                LOGGER.info("Person with role USER added");
+                if (PersonDao.insertPerson(new Person(fullName[1], fullName[0], userName, Role.USER.ordinal(), String.valueOf(session.getAttribute("locale")), password)) != null) {
+                    LOGGER.info("Person with role USER added");
+                }
                 forward = Path.PAGE__LOGIN;
             }
             return forward;

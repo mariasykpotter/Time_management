@@ -1,8 +1,11 @@
+<%@ page import="com.example.demo.dao.ActivitiesDao" %>
+<%@ page import="com.example.demo.dao.Constants" %>
 <%@ page import="com.example.demo.dao.TimeLogDao" %>
 <%@ page import="com.example.demo.model.Person" %>
 <%@ page import="java.util.List" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -20,9 +23,26 @@
     </script>
 </head>
 <body>
+<header>
+    <ul style="float:right; margin-right:55px; overflow:hidden">
+        <li style="list-style:none; display:inline-block; margin-right:5px">
+            <a href="/activities?lang=uk_UA" class="ua"><img
+                    src="https://www.countryflags.io/ua/flat/32.png"></a>
+        </li>
+        <li style="list-style:none; display:inline-block">
+            <a href="/activities?lang=en_US" class="us"><img
+                    src="https://www.countryflags.io/us/flat/32.png"></a>
+        </li>
+    </ul>
+</header>
+<c:if test="${param.lang!=null}">
+    <c:set var="locale" value="${param.lang}" scope="session"/>
+</c:if>
+<fmt:setLocale value="${sessionScope.locale}"/>
+<fmt:setBundle basename="resources" var="bundle"/>
 <div class="container">
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#">Navbar</a>
+        <a class="navbar-brand" href="#"><fmt:message key="navbar.logo" bundle="${bundle}"/></a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -32,24 +52,28 @@
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
                     <form action="/add_activity" method="post">
-                        <button class="btn btn-light mt-3 ml-3" type="submit">Add activity</button>
+                        <button class="btn btn-light mt-3 ml-3" type="submit"><fmt:message key="add_activity"
+                                                                                           bundle="${bundle}"/></button>
                         <input type="hidden" name="command" value="add_activity">
                     </form>
                 </li>
                 <li class="nav-item">
                     <form action="/edit_timelogs" method="post">
-                        <button class="btn btn-light mt-3 ml-3" type="submit">Edit timelogs</button>
+                        <button class="btn btn-light mt-3 ml-3" type="submit"><fmt:message key="edit_timelogs"
+                                                                                           bundle="${bundle}"/></button>
                         <input type="hidden" name="command" value="edit_timelogs">
                     </form>
                 </li>
                 <li>
                     <form action="/controller" method="post">
-                        <button class="btn btn-primary mt-3 ml-3" type="submit">Log out</button>
+                        <button class="btn btn-primary mt-3 ml-3" type="submit"><fmt:message key="navbar.log_out"
+                                                                                             bundle="${bundle}"/></button>
                         <input type="hidden" name="command" value="logout">
                     </form>
                 </li>
                 <li class="nav-item mt-3 ml-3">
-                    <input class="btn btn-primary" type="submit" form="checkbox_form" value="Delete activities"/>
+                    <input class="btn btn-primary" type="submit" form="checkbox_form"
+                           value="<fmt:message key="navbar.delete_activities" bundle="${bundle}"/>"/>
                 </li>
             </ul>
         </div>
@@ -57,14 +81,14 @@
     <table class="table table-striped" id="activities">
         <thead>
         <tr>
-            <th>activityName</th>
-            <th>category</th>
-            <th>duration in hours</th>
-            <th>Delete</th>
+            <th><fmt:message key="activity" bundle="${bundle}"/></th>
+            <th><fmt:message key="category" bundle="${bundle}"/></th>
+            <th><fmt:message key="duration" bundle="${bundle}"/></th>
+            <th><fmt:message key="delete" bundle="${bundle}"/></th>
         </tr>
         </thead>
         <tbody>
-        <c:forEach items="${sessionScope.activities_list}" var="list">
+        <c:forEach items="${ActivitiesDao.getAllActivitiesWithCategory(Constants.ACTIVITY_NAME)}" var="list">
             <tr>
                 <td>
                     <form method="post" action="write">

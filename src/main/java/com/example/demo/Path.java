@@ -12,4 +12,5 @@ public final class Path {
     public static final String PAGE__UNAPPROVED = "/unapproved";
     public static final String PAGE__VIEW_CATEGORIES = "/view_categories";
     public static final String PAGE__VIEW_USERS = "/view_users";
+    public static final String PAGE__LANGUAGE_SWITCHER = "/WEB-INF/language_switcher.jspf";
 }

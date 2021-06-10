@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="com.example.demo.dao.CategoryDao" %>
 <html>
 <head>
@@ -19,20 +20,39 @@
             crossorigin="anonymous"></script>
 </head>
 <body>
+<header>
+    <ul style="float:right; margin-right:55px; overflow:hidden">
+        <li style="list-style:none; display:inline-block; margin-right:5px">
+            <a href="add_activity?lang=uk_UA" class="ua"><img
+                    src="https://www.countryflags.io/ua/flat/32.png"></a>
+        </li>
+        <li style="list-style:none; display:inline-block">
+            <a href="/add_activity?lang=en_US" class="us"><img
+                    src="https://www.countryflags.io/us/flat/32.png"></a>
+        </li>
+    </ul>
+</header>
+<c:if test="${param.lang!=null}">
+    <c:set var="locale" value="${param.lang}" scope="session"/>
+</c:if>
+<fmt:setLocale value="${sessionScope.locale}"/>
+<fmt:setBundle basename="resources" var="bundle"/>
 <div class="container">
     <form action="/controller" method="post">
         <div class="form-group">
-            <label for="activity_name" class="col-2 col-form-label">Activity name</label>
+            <label for="activity_name" class="col-2 col-form-label"><fmt:message key="activity"
+                                                                                 bundle="${bundle}"/></label>
             <div class="col-5">
-                <input class="form-control" type="text" placeholder="Activity name" name="activity" id="activity_name"
+                <input class="form-control" type="text" placeholder="<fmt:message key="activity" bundle="${bundle}"/>"
+                       name="activity" id="activity_name"
                        required>
             </div>
         </div>
         <div class="form-group">
-            <label class="col-2 col-form-label">Category name</label>
+            <label class="col-2 col-form-label"><fmt:message key="category" bundle="${bundle}"/></label>
             <div class="col-5">
                 <select class="form-select" name="category" aria-label="Default select example">
-                    <option selected>Category name</option>
+                    <option selected><fmt:message key="category" bundle="${bundle}"/></option>
                     <c:forEach items="${CategoryDao.getAllCategories()}" var="category">
                         <option value="${category.getId()}">${category.getCategoryName()}</option>
                     </c:forEach>
@@ -42,7 +62,7 @@
         <div class="form-group row">
             <div class="offset-sm-4">
                 <input type="hidden" name="command" value="addActivity" required>
-                <button type="submit" class="btn-md btn-primary">Add activity</button>
+                <button type="submit" class="btn-md btn-primary"><fmt:message key="add_activity" bundle="${bundle}"/></button>
             </div>
         </div>
     </form>
