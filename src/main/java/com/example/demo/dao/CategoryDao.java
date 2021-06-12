@@ -7,14 +7,19 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Data access object for categories related entities
+ */
 public class CategoryDao {
     private static final Logger LOGGER = Logger.getLogger(CategoryDao.class);
     private static DBManager dbm = DBManager.getInstance();
-    private static String QUERY1 = "SELECT * FROM CATEGORY ORDER BY category_name";
-    private static String QUERY2 = "INSERT INTO CATEGORY VALUES(DEFAULT,?)";
-    private static String QUERY3 = "DELETE FROM CATEGORY WHERE id=?";
-    private static String QUERY4 = "UPDATE CATEGORY SET CATEGORY_NAME=? WHERE id=?";
+    private static final String QUERY1 = "SELECT * FROM CATEGORY ORDER BY category_name";
+    private static final String QUERY2 = "INSERT INTO CATEGORY VALUES(DEFAULT,?)";
+    private static final String QUERY4 = "UPDATE CATEGORY SET CATEGORY_NAME=? WHERE id=?";
 
+    /**
+     * Private constructor for CategoryDao
+     */
     private CategoryDao() {
     }
 
@@ -33,6 +38,12 @@ public class CategoryDao {
         return lst;
     }
 
+    /**
+     * Add a category with a particular category name
+     *
+     * @param categoryName category name
+     * @return true or false depending on whether the category was added.
+     */
     public static boolean addCategory(String categoryName) {
         Connection con = null;
         PreparedStatement pstmt = null;
@@ -48,7 +59,6 @@ public class CategoryDao {
                 }
             }
         } catch (SQLException throwables) {
-            System.out.println(throwables.getMessage());
             LOGGER.error(throwables.getMessage());
             return false;
         } finally {
@@ -59,24 +69,9 @@ public class CategoryDao {
         return false;
     }
 
-    public static void deleteCategory(int[] idList) {
-        int n = idList.length;
-        String QUERY7 = "DELETE FROM CATEGORY WHERE id IN (" + DBManager.repeat(n - 1, "?,") + "?)";
-        ResultSet rs = null;
-        try (Connection con = dbm.getConnection();
-             PreparedStatement pstmt = con.prepareStatement(QUERY7)) {
-            for (int i = 1; i <= n; i++) {
-                pstmt.setInt(i, idList[i - 1]);
-            }
-            rs = pstmt.executeQuery();
-        } catch (SQLException throwables) {
-            LOGGER.error(throwables.getMessage());
-        } finally {
-            DBManager.close(rs);
-        }
-    }
-
-
+    /**
+     * Extracts a category from the result set row.
+     */
     private static class CategoryMapper implements EntityMapper<Category> {
 
         @Override
@@ -92,6 +87,12 @@ public class CategoryDao {
         }
     }
 
+    /**
+     * Update category name.
+     *
+     * @param categoryId category id.
+     * @param categoryName category name.
+     */
     public static void updateCategory(int categoryId, String categoryName) {
         ResultSet rs = null;
         try (Connection con = dbm.getConnection();

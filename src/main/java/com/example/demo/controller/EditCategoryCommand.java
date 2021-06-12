@@ -21,6 +21,6 @@ public class EditCategoryCommand extends Command {
         CategoryDao.updateCategory(Integer.valueOf(request.getParameter("category_id")), category);
         LOGGER.trace("Category with id" + categoryId + " updated to category " + category);
         LOGGER.debug("Command finished");
-        return Path.PAGE__VIEW_CATEGORIES;
+        return Path.PAGE_VIEW_CATEGORIES;
     }
 }

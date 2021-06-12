@@ -21,6 +21,6 @@ public class LogOutCommand extends Command {
             session.invalidate();
         LOGGER.info("Session invalidated");
         LOGGER.debug("Command finished");
-        return Path.PAGE__LOGIN;
+        return Path.PAGE_LOGIN;
     }
 }

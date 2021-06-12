@@ -99,7 +99,7 @@
         <init-param>
             <param-name>admin</param-name>
             <param-value>addCategory approve editCategory deleteUser deleteCategory view_users view_categories
-                unapproved admin register_admin
+                unapproved admin register_admin deleteLog
             </param-value>
         </init-param>
         <init-param>

@@ -3,7 +3,6 @@ package com.example.demo.filter;
 import com.example.demo.Path;
 import com.example.demo.model.Role;
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -11,15 +10,20 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.*;
 
+/**
+ * Filters the request by the rights of users.
+ */
 public class CommandAccessFilter implements Filter {
 
     private static final Logger log = Logger.getLogger(CommandAccessFilter.class);
+    private static final String LOCALE = "locale";
 
     // commands access
-    private static Map<Role, List<String>> accessMap = new HashMap<Role, List<String>>();
-    private static List<String> commons = new ArrayList<String>();
-    private static List<String> outOfControl = new ArrayList<String>();
+    private static final Map<Role, List<String>> accessMap = new HashMap<>();
+    private static List<String> commons = new ArrayList<>();
+    private static List<String> outOfControl = new ArrayList<>();
 
+    @Override
     public void destroy() {
         log.debug("Filter destruction starts");
         // do nothing
@@ -33,16 +37,26 @@ public class CommandAccessFilter implements Filter {
             log.debug("Filter finished");
             chain.doFilter(request, response);
         } else {
-            String errorMessage = "You do not have permission to access the requested resource";
-
-            request.setAttribute("errorMessage", errorMessage);
+            HttpServletRequest httpRequest = (HttpServletRequest) request;
+            HttpSession session = httpRequest.getSession();
+            log.trace(LOCALE + session.getAttribute(LOCALE));
+            String sessionAttr = (String) session.getAttribute(LOCALE);
+            ResourceBundle bundle = ResourceBundle.getBundle("resources", new Locale(sessionAttr.split("_")[0], sessionAttr.split("_")[1]));
+            String errorMessage = bundle.getString("error.accessDenied");
+            session.setAttribute("errorMessage", errorMessage);
             log.trace("Set the request attribute: errorMessage --> " + errorMessage);
 
-            request.getRequestDispatcher(Path.PAGE__ERROR_PAGE)
+            request.getRequestDispatcher(Path.PAGE_ERROR_PAGE)
                     .forward(request, response);
         }
     }
 
+    /**
+     * Defined whether or not the request to a particular page is allowed.
+     *
+     * @param request HTTP request
+     * @return boolean whether access is allowed to a page.
+     */
     private boolean accessAllowed(ServletRequest request) {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         log.trace("URL: " + ((HttpServletRequest) request).getRequestURI().replace("/", ""));
@@ -71,7 +85,8 @@ public class CommandAccessFilter implements Filter {
                 || commons.contains(commandName);
     }
 
-    public void init(FilterConfig fConfig) throws ServletException {
+    @Override
+    public void init(FilterConfig fConfig) {
 
         log.debug("Filter initialization starts");
 
@@ -98,7 +113,7 @@ public class CommandAccessFilter implements Filter {
      * @return list of parameter values.
      */
     private List<String> asList(String str) {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         StringTokenizer st = new StringTokenizer(str);
         while (st.hasMoreTokens()) list.add(st.nextToken());
         return list;

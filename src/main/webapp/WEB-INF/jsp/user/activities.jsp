@@ -1,4 +1,4 @@
-<%@ page import="com.example.demo.dao.ActivitiesDao" %>
+<%@ page import="com.example.demo.dao.ActivityDao" %>
 <%@ page import="com.example.demo.dao.Constants" %>
 <%@ page import="com.example.demo.dao.TimeLogDao" %>
 <%@ page import="com.example.demo.model.Person" %>
@@ -88,7 +88,7 @@
         </tr>
         </thead>
         <tbody>
-        <c:forEach items="${ActivitiesDao.getAllActivitiesWithCategory(Constants.ACTIVITY_NAME)}" var="list">
+        <c:forEach items="${ActivityDao.getAllActivitiesWithCategory(Constants.ACTIVITY_NAME)}" var="list">
             <tr>
                 <td>
                     <form method="post" action="write">
@@ -103,11 +103,6 @@
                 </td>
                 <td>
                     <input type="checkbox" name="activities" value="${list.get(2)}" form="checkbox_form">
-                        <%--                    <form method="post" action="com.example.demo.controller">--%>
-                        <%--                        <button type="submit" class="btn btn-light">Delete an activity</button>--%>
-                        <%--                        <input type="hidden" value="deleteActivity" name="command"/>--%>
-                        <%--                        <input type="hidden" value="${list.get(2)}" name="id"/>--%>
-                        <%--                    </form>--%>
                 </td>
             </tr>
         </c:forEach>

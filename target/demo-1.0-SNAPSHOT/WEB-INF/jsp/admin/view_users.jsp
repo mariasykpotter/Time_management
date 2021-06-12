@@ -2,6 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="com.example.demo.dao.TimeLogDao" %>
+<%@ taglib prefix="tag" uri="/WEB-INF/mytag/mytag.tld"%>
 <html>
 <head>
     <title>Title</title>
@@ -71,19 +72,15 @@
         <tbody>
         <c:forEach items="${TimeLogDao.getInfoAboutUser()}" var="list">
             <tr>
-                <td><c:out value="${list.get(0)}"/></td>
-                <td><c:out value="${list.get(1)}"/></td>
-                <td><c:out value="${list.get(2)}"/></td>
-                <td><c:out value="${list.get(3)}"/></td>
                 <c:choose>
                     <c:when test="${list.get(3).equals('user')}">
-                        <td><c:out value="${list.get(4)}"/></td>
-                        <td><c:out value="${list.get(5)}"/></td>
+                        <tag:table num="5" list="${list}"></tag:table>
                         <td>
                             <input type="checkbox" name="users" value="${list.get(6)}" form="checkbox_form">
                         </td>
                     </c:when>
                     <c:otherwise>
+                        <tag:table num="3" list="${list}"></tag:table>
                         <td></td>
                         <td></td>
                         <td></td>

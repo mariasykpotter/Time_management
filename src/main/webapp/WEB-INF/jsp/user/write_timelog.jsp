@@ -1,8 +1,8 @@
-<%@ page import="com.example.demo.dao.ActivitiesDao" %>
+<%@ page import="com.example.demo.dao.ActivityDao" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ page import="com.example.demo.dao.ActivitiesDao" %>
+<%@ page import="com.example.demo.dao.ActivityDao" %>
 <%@ page import="com.example.demo.model.Activity" %>
 <html>
 <head>
@@ -28,14 +28,14 @@
 </c:if>
 <fmt:setLocale value="${sessionScope.locale}"/>
 <fmt:setBundle basename="resources" var="bundle"/>
-<c:if test="${requestScope.message !=null}">
+<c:if test="${sessionScope.message !=null}">
     <div class="alert alert-info alert-dismissible fade show">
-        <strong>Info!</strong>${requestScope.message}
+        <strong>Info!</strong>${sessionScope.message}
         <button type="button" class="close" data-dismiss="alert">&times;</button>
     </div>
 </c:if>
 <c:if test="${param.id!=null}">
-    <c:set var="activity" scope="session" value="${ActivitiesDao.getById(param.id)}"></c:set>
+    <c:set var="activity" scope="session" value="${ActivityDao.getById(param.id)}"></c:set>
 </c:if>
 <div class="container">
     <form action="/controller" method="post">
@@ -66,7 +66,8 @@
         </div>
         <div class="form-group row">
             <div class="offset-sm-4">
-                <button type="submit" class="btn-md btn-primary"><fmt:message key="add_timelog" bundle="${bundle}"/></button>
+                <button type="submit" class="btn-md btn-primary"><fmt:message key="add_timelog"
+                                                                              bundle="${bundle}"/></button>
                 <input type="hidden" name="command" value="addLog"/>
             </div>
         </div>

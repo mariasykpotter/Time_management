@@ -43,7 +43,7 @@
             <label for="activity_name" class="col-2 col-form-label"><fmt:message key="activity"
                                                                                  bundle="${bundle}"/></label>
             <div class="col-5">
-                <input class="form-control" type="text" placeholder="<fmt:message key="category" bundle="${bundle}"/>"
+                <input class="form-control" type="text" placeholder="<fmt:message key="activity" bundle="${bundle}"/>"
                        name="activity" id="activity_name"
                        required>
             </div>
@@ -52,7 +52,7 @@
             <label class="col-2 col-form-label"><fmt:message key="category" bundle="${bundle}"/></label>
             <div class="col-5">
                 <select class="form-select" name="category" aria-label="Default select example">
-                    <option selected><fmt:message key="activity" bundle="${bundle}"/></option>
+                    <option selected><fmt:message key="category" bundle="${bundle}"/></option>
                     <c:forEach items="${CategoryDao.getAllCategories()}" var="category">
                         <option value="${category.getId()}">${category.getCategoryName()}</option>
                     </c:forEach>

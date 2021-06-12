@@ -26,6 +26,7 @@ public class CommandContainer {
         commands.put("deleteActivity", new DeleteActivityCommand());
         commands.put("deleteUser", new DeleteUserCommand());
         commands.put("deleteCategory", new DeleteCategoryCommand());
+        commands.put("deleteLog", new DeleteLogCommand());
         commands.put("logout", new LogOutCommand());
         LOGGER.debug("Command container was successfully initialized");
         LOGGER.trace("Number of commands --> " + commands.size());

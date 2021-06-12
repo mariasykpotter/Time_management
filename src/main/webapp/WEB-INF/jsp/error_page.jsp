@@ -5,6 +5,6 @@
     <title>Title</title>
 </head>
 <body>
-<c:out value="${requestScope.errorMessage}"/>
+<c:out value="${sessionScope.errorMessage}"/>
 </body>
 </html>

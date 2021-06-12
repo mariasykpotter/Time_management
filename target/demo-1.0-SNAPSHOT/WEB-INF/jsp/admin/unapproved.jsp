@@ -2,6 +2,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib prefix="tag" uri="/WEB-INF/mytag/mytag.tld"%>
 <html>
 <head>
     <title>Title</title>
@@ -33,7 +34,9 @@
         </li>
     </ul>
 </header>
-<c:set var="unapprovedActivities" scope="request" value="${TimeLogDao.getInfoByStatus(param.id,0)}"></c:set>
+<c:if test="${param.id!=null}">
+<c:set var="unapprovedActivities" scope="session" value="${TimeLogDao.getInfoByStatus(param.id,0)}"></c:set>
+</c:if>
 <c:if test="${param.lang!=null}">
     <c:set var="locale" value="${param.lang}" scope="session"/>
 </c:if>
@@ -51,6 +54,10 @@
                         <input type="hidden" name="command" value="admin"/>
                     </form>
                 </li>
+                <li class="nav-item mt-3 ml-3">
+                    <input class="btn btn-primary" type="submit" form="checkbox_form"
+                           value="<fmt:message key="delete" bundle="${bundle}"/>"/>
+                </li>
             </ul>
         </div>
     </nav>
@@ -64,30 +71,32 @@
             <th><fmt:message key="category" bundle="${bundle}"/></th>
             <th><fmt:message key="start" bundle="${bundle}"/></th>
             <th><fmt:message key="end" bundle="${bundle}"/></th>
-            <th><fmt:message key="action" bundle="${bundle}"/></th>
+            <th><fmt:message key="action1" bundle="${bundle}"/></th>
+            <th><fmt:message key="action2" bundle="${bundle}"/></th>
         </tr>
         </thead>
         <tbody>
-        <c:forEach items="${requestScope.unapprovedActivities}" var="list">
+        <c:forEach items="${sessionScope.unapprovedActivities}" var="list">
             <tr>
-                <td><c:out value="${list.get(0)}"/></td>
-                <td><c:out value="${list.get(1)}"/></td>
-                <td><c:out value="${list.get(2)}"/></td>
-                <td><c:out value="${list.get(3)}"/></td>
-                <td><c:out value="${list.get(4)}"/></td>
-                <td><c:out value="${list.get(5)}"/></td>
-                <td><c:out value="${list.get(6)}"/></td>
+                <tag:table num="6" list="${list}"></tag:table>
                 <td>
                     <form method="post" action="controller">
-                        <button type="submit" class="btn btn-light"><fmt:message key="approve" bundle="${bundle}"/></button>
+                        <button type="submit" class="btn btn-light"><fmt:message key="approve"
+                                                                                 bundle="${bundle}"/></button>
                         <input type="hidden" value="approve" name="command"/>
                         <input type="hidden" value="${list.get(7)}" name="time_log_id"/>
                     </form>
+                </td>
+                <td>
+                    <input type="checkbox" name="timelogs" value="${list.get(7)}" form="checkbox_form">
                 </td>
             </tr>
         </c:forEach>
         </tbody>
     </table>
+    <form method="post" action="controller" id="checkbox_form">
+        <input type="hidden" value="deleteLog" name="command"/>
+    </form>
 </div>
 </body>
 </html>

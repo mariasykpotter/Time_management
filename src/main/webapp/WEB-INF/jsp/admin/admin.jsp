@@ -1,6 +1,7 @@
 <%@ page import="java.util.List" %>
 <%@ page import="com.example.demo.dao.TimeLogDao" %>
-<%@ page import="com.example.demo.dao.ActivitiesDao" %>
+<%@ page import="com.example.demo.dao.ActivityDao" %>
+<%@ page import="com.example.demo.dao.Constants" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
@@ -45,9 +46,6 @@
         <button type="button" class="close" data-dismiss="alert">&times;</button>
     </div>
 </c:if>
-<c:if test="${param.id!=null}">
-    <c:set var="activity" scope="session" value="${ActivitiesDao.getById(param.id)}"></c:set>
-</c:if>
 <div class="container">
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <a class="navbar-brand" href="#"><fmt:message key="navbar.logo" bundle="${bundle}"/></a>
@@ -59,30 +57,35 @@
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
                     <form action="/add_activity" method="post">
-                        <button class="btn btn-light mt-3 ml-3" type="submit"><fmt:message key="add_activity" bundle="${bundle}"/></button>
+                        <button class="btn btn-light mt-3 ml-3" type="submit"><fmt:message key="add_activity"
+                                                                                           bundle="${bundle}"/></button>
                         <input type="hidden" name="command" value="add_activity">
                     </form>
                 </li>
                 <li class="nav-item">
                     <form action="/view_users" method="post">
-                        <button class="btn btn-light mt-3 ml-3" type="submit"><fmt:message key="navbar.users" bundle="${bundle}"/></button>
+                        <button class="btn btn-light mt-3 ml-3" type="submit"><fmt:message key="navbar.users"
+                                                                                           bundle="${bundle}"/></button>
                         <input type="hidden" name="command" value="view_users">
                     </form>
                 </li>
                 <li class="nav-item">
                     <form action="/view_categories" method="post">
-                        <button class="btn btn-light mt-3 ml-3" type="submit"><fmt:message key="navbar.categories" bundle="${bundle}"/></button>
+                        <button class="btn btn-light mt-3 ml-3" type="submit"><fmt:message key="navbar.categories"
+                                                                                           bundle="${bundle}"/></button>
                         <input type="hidden" name="command" value="view_categories">
                     </form>
                 </li>
                 <li class="nav-item mt-3 ml-3">
                     <form action="/controller" method="post">
-                        <input class="btn btn-primary" type="submit" value="<fmt:message key="navbar.log_out" bundle="${bundle}"/>"/>
+                        <input class="btn btn-primary" type="submit"
+                               value="<fmt:message key="navbar.log_out" bundle="${bundle}"/>"/>
                         <input type="hidden" name="command" value="logout"/>
                     </form>
                 </li>
                 <li class="nav-item mt-3 ml-3">
-                    <input class="btn btn-primary" type="submit" form="checkbox_form" value="<fmt:message key="navbar.delete_activities" bundle="${bundle}"/>"/>
+                    <input class="btn btn-primary" type="submit" form="checkbox_form"
+                           value="<fmt:message key="navbar.delete_activities" bundle="${bundle}"/>"/>
                 </li>
             </ul>
         </div>
@@ -98,7 +101,7 @@
         </tr>
         </thead>
         <tbody>
-        <c:forEach items="${ActivitiesDao.getAllActivitiesWithCategory(null)}" var="list">
+        <c:forEach items="${ActivityDao.getAllActivitiesWithCategory(Constants.ACTIVITY_NAME)}" var="list">
             <c:set var="count" scope="request"
                    value="${TimeLogDao.getQuantityPerActivityAndStatus(Integer.valueOf(list.get(2)), 0)}"></c:set>
             <tr>

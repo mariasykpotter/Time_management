@@ -29,17 +29,17 @@ public class RegisterCommand extends Command {
                 if (PersonDao.insertPerson(new Person(fullName[1], fullName[0], userName, role.ordinal(), (String) session.getAttribute("locale"), password)) != null) {
                     LOGGER.info(String.format("Person with role %s added", role.name()));
                 }
-                forward = Path.PAGE__VIEW_USERS;
+                forward = Path.PAGE_VIEW_USERS;
             } else {
                 if (PersonDao.insertPerson(new Person(fullName[1], fullName[0], userName, Role.USER.ordinal(), String.valueOf(session.getAttribute("locale")), password)) != null) {
                     LOGGER.info("Person with role USER added");
                 }
-                forward = Path.PAGE__LOGIN;
+                forward = Path.PAGE_LOGIN;
             }
             return forward;
         } else {
             LOGGER.error("Some of the fields are null");
-            return Path.PAGE__REGISTRATION;
+            return Path.PAGE_REGISTRATION;
         }
     }
 }

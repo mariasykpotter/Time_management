@@ -1,7 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.Path;
-import com.example.demo.dao.ActivitiesDao;
+import com.example.demo.dao.ActivityDao;
 import com.example.demo.dao.TimeLogDao;
 import org.apache.log4j.Logger;
 
@@ -19,9 +19,9 @@ public class EditTimeLogCommand extends Command {
     public String execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
        LOGGER.debug("Command starts");
        LOGGER.trace("Update timelog set activity: {}, start_at: {}, end_at: {}".format(request.getParameter("activity"),request.getParameter("start_at"),request.getParameter("end_at")));
-        TimeLogDao.updateTimeLog(ActivitiesDao.getIdByName(request.getParameter("activity")), Time.valueOf(request.getParameter("start_at")),
+        TimeLogDao.updateTimeLog(ActivityDao.getIdByName(request.getParameter("activity")), Time.valueOf(request.getParameter("start_at")),
                 Time.valueOf(request.getParameter("end_at")), Integer.valueOf(request.getParameter("log_id")));
         LOGGER.debug("Command finished");
-        return Path.PAGE__EDIT_TIMELOGS;
+        return Path.PAGE_EDIT_TIMELOGS;
     }
 }

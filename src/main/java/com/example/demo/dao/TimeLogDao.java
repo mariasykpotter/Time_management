@@ -8,6 +8,9 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Date;
 
+/**
+ * Data access object for TimeLog
+ */
 public class TimeLogDao {
     private static final Logger LOGGER = Logger.getLogger(TimeLogDao.class);
     private static final String QUERY1 = "SELECT SUM(Duration) AS SUM_DURATION FROM TIME_LOG WHERE user_id=? AND activity_id=? GROUP BY activity_id";
@@ -36,11 +39,21 @@ public class TimeLogDao {
             "            INNER JOIN PERSON B ON  A.user_id=B.id\n" +
             "            INNER JOIN ACTIVITY C ON A.activity_id=C.id \n" +
             "            INNER JOIN CATEGORY D ON C.category_id = D.id WHERE C.id=37 AND A.STATUS=0";
-    private static DBManager dbm = DBManager.getInstance();
+    private static final DBManager dbm = DBManager.getInstance();
 
+    /**
+     * Private constructor for Time_Log
+     */
     private TimeLogDao() {
     }
 
+    /**
+     * Counts the duration between time1 and time2
+     *
+     * @param time1 start time
+     * @param time2 end time
+     * @return time difference
+     */
     public static float countDifference(String time1, String time2) {
         SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
         Date date1 = null;
@@ -54,6 +67,13 @@ public class TimeLogDao {
         return (float) ((date2.getTime() - date1.getTime()) / (60 * 1000 * 60.0));
     }
 
+    /**
+     * Counts an overall duration for a specific activity corresponding to a specific user.
+     *
+     * @param userId     user id.
+     * @param activityId activity id.
+     * @return sum of activity duration for a user.
+     */
     public static float getSumDuration(Integer userId, Integer activityId) {
         ResultSet rs = null;
         try (Connection con = dbm.getConnection();
@@ -72,11 +92,19 @@ public class TimeLogDao {
         return 0.0F;
     }
 
-    public static boolean addTimeLog(int userId, int activityId, Time start, Time end, float duration) {
+    /**
+     * Add a time log
+     *
+     * @param userId     user id
+     * @param activityId activity id
+     * @param start      start time
+     * @param end        end time
+     * @param duration   duration of one time log
+     */
+    public static void addTimeLog(int userId, int activityId, Time start, Time end, float duration) {
         Connection con = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
-        boolean added = false;
         try {
             con = dbm.getConnection();
             pstmt = con.prepareStatement(QUERY2, Statement.RETURN_GENERATED_KEYS);
@@ -87,9 +115,6 @@ public class TimeLogDao {
             pstmt.setFloat(5, duration);
             if (pstmt.executeUpdate() > 0) {
                 rs = pstmt.getGeneratedKeys();
-                if (rs.next()) {
-                    added = true;
-                }
             }
         } catch (SQLException e) {
             LOGGER.error(e.getMessage());
@@ -98,14 +123,20 @@ public class TimeLogDao {
             DBManager.close(pstmt);
             DBManager.close(con);
         }
-        return added;
     }
 
-    public static Integer getQuantityPerActivityAndStatus(int id, int status) {
+    /**
+     * Count the number of users enrolled in a particular activity with a particular status.
+     *
+     * @param activityId activity id
+     * @param status     status (APPROVED OR UNAPPROVED)
+     * @return number of users
+     */
+    public static Integer getQuantityPerActivityAndStatus(int activityId, int status) {
         ResultSet rs = null;
         try (Connection con = dbm.getConnection();
              PreparedStatement pstmt = con.prepareStatement(QUERY3)) {
-            pstmt.setInt(1, id);
+            pstmt.setInt(1, activityId);
             pstmt.setInt(2, status);
             rs = pstmt.executeQuery();
             if (rs.next()) {
@@ -119,16 +150,21 @@ public class TimeLogDao {
         return 0;
     }
 
+    /**
+     * Get information about all timelogs
+     *
+     * @return List of List of Strings
+     */
     public static List<List<String>> getAllTimeLogsInfo() {
         List<List<String>> lst = new ArrayList<>();
         try (Connection con = dbm.getConnection();
              Statement pstmt = con.createStatement();
              ResultSet rs = pstmt.executeQuery(QUERY8)) {
             while (rs.next()) {
-                List<String> values = new ArrayList<>(Arrays.asList(new String[]{rs.getString(Constants.ACTIVITY_NAME),
+                List<String> values = new ArrayList<>(Arrays.asList(rs.getString(Constants.ACTIVITY_NAME),
                         rs.getString(Constants.CATEGORY_NAME), String.valueOf(rs.getTime(Constants.START_AT)),
                         String.valueOf(rs.getTime(Constants.END_AT)), String.valueOf(rs.getFloat(Constants.DURATION))
-                        , String.valueOf(rs.getInt(Constants.STATUS)), String.valueOf(rs.getInt(Constants.ENTITY_ID))}));
+                        , String.valueOf(rs.getInt(Constants.STATUS)), String.valueOf(rs.getInt(Constants.ENTITY_ID))));
                 lst.add(values);
             }
         } catch (SQLException throwables) {
@@ -137,8 +173,15 @@ public class TimeLogDao {
         return lst;
     }
 
-    public static List<List<String>> getInfoByStatus(String str_id, int status) {
-        int id = Integer.valueOf(str_id);
+    /**
+     * Gets information about timelogs for a particular activity with a particular status.
+     *
+     * @param strId  activity if.
+     * @param status timelog status(APPROVED OR UNAPPROVED)
+     * @return List of List of Strings
+     */
+    public static List<List<String>> getInfoByStatus(String strId, int status) {
+        int id = Integer.parseInt(strId);
         ResultSet rs = null;
         List<List<String>> lst = new ArrayList<>();
         try (Connection con = dbm.getConnection();
@@ -160,6 +203,11 @@ public class TimeLogDao {
         return lst;
     }
 
+    /**
+     * Get information about all users
+     *
+     * @return List of List of Strings
+     */
     public static List<List<String>> getInfoAboutUser() {
         List<List<String>> lst = new ArrayList<>();
         try (Connection con = dbm.getConnection();
@@ -176,36 +224,43 @@ public class TimeLogDao {
         return lst;
     }
 
-    public static int getNumOfUnapproved() {
-        List<List<String>> lst = new ArrayList<>();
-        try (Connection con = dbm.getConnection();
-             Statement stmt = con.createStatement();
-             ResultSet rs = stmt.executeQuery(QUERY10)) {
-            while (rs.next()) {
-                return rs.getInt("COUNT");
-            }
-        } catch (SQLException throwables) {
-            LOGGER.error(throwables.getMessage());
-        }
-        return 0;
-    }
+//    public static int getNumOfUnapproved() {
+//        try (Connection con = dbm.getConnection();
+//             Statement stmt = con.createStatement();
+//             ResultSet rs = stmt.executeQuery(QUERY10)) {
+//            if (rs.next()) {
+//                return rs.getInt("COUNT");
+//            }
+//        } catch (SQLException throwables) {
+//            LOGGER.error(throwables.getMessage());
+//        }
+//        return 0;
+//    }
 
-    public static List<List<String>> getOrderedQuantityPerActivity() {
-        List<List<String>> lst = new ArrayList<>();
-        try (Connection con = dbm.getConnection();
-             Statement pstmt = con.createStatement();
-             ResultSet rs = pstmt.executeQuery(QUERY6)) {
-            while (rs.next()) {
-                List<String> values = new ArrayList<>(Arrays.asList(new String[]{rs.getString(Constants.ACTIVITY_NAME),
-                        rs.getString(Constants.CATEGORY_NAME), rs.getString(Constants.ENTITY_ID)}));
-                lst.add(values);
-            }
-        } catch (SQLException throwables) {
-            LOGGER.error(throwables.getMessage());
-        }
-        return lst;
-    }
+//    public static List<List<String>> getOrderedQuantityPerActivity() {
+//        List<List<String>> lst = new ArrayList<>();
+//        try (Connection con = dbm.getConnection();
+//             Statement pstmt = con.createStatement();
+//             ResultSet rs = pstmt.executeQuery(QUERY6)) {
+//            while (rs.next()) {
+//                List<String> values = new ArrayList<>(Arrays.asList(rs.getString(Constants.ACTIVITY_NAME),
+//                        rs.getString(Constants.CATEGORY_NAME), rs.getString(Constants.ENTITY_ID)));
+//                lst.add(values);
+//            }
+//        } catch (SQLException throwables) {
+//            LOGGER.error(throwables.getMessage());
+//        }
+//        return lst;
+//    }
 
+    /**
+     * Update timelog's activity, start time, end time.
+     *
+     * @param activityId activity id.
+     * @param startAt    start time.
+     * @param endAt      end time.
+     * @param timelogId  timelog id.
+     */
     public static void updateTimeLog(int activityId, Time startAt, Time endAt, int timelogId) {
         ResultSet rs = null;
         try (Connection con = dbm.getConnection();
@@ -224,11 +279,16 @@ public class TimeLogDao {
     }
 
 
-    public static void updateStatus(int time_log_id) {
+    /**
+     * Update time log status.
+     *
+     * @param timelogId timelog id.
+     */
+    public static void updateStatus(int timelogId) {
         ResultSet rs = null;
         try (Connection con = dbm.getConnection();
              PreparedStatement pstmt = con.prepareStatement(QUERY5)) {
-            pstmt.setInt(1, time_log_id);
+            pstmt.setInt(1, timelogId);
             rs = pstmt.executeQuery();
         } catch (SQLException throwables) {
             LOGGER.error(throwables.getMessage());

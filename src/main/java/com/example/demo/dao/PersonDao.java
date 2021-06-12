@@ -7,19 +7,30 @@ import org.apache.log4j.Logger;
 import java.sql.*;
 
 
+/**
+ * Data access object for Person entity
+ */
 public class PersonDao {
-    private static final DBManager dbm = DBManager.getInstance();
+    private static DBManager dbm = DBManager.getInstance();
     private static final String INSERT_QUERY = "INSERT INTO PERSON VALUES (DEFAULT,?,?,?,?,?,?)";
     private static final String SELECT_QUERY = "SELECT * FROM PERSON WHERE user_name=?";
-    private static final String DELETE_QUERY = "DELETE FROM PERSON WHERE ID=?";
     private static final Logger LOGGER = Logger.getLogger(PersonDao.class);
 
+    /**
+     * Private constructor for PersonDao
+     */
     private PersonDao() {
     }
 
+    /**
+     * Inserts given person into a table Person.
+     *
+     * @param person Person entity.
+     * @return Person entity with updated id.
+     */
     public static Person insertPerson(Person person) {
         try (Connection con = dbm.getConnection();
-             PreparedStatement pstmt = con.prepareStatement(INSERT_QUERY, Statement.RETURN_GENERATED_KEYS);
+             PreparedStatement pstmt = con.prepareStatement(INSERT_QUERY, Statement.RETURN_GENERATED_KEYS)
         ) {
             pstmt.setString(1, person.getFirstName());
             pstmt.setString(2, person.getLastName());
@@ -36,16 +47,21 @@ public class PersonDao {
                 }
             }
         } catch (SQLException throwables) {
-            System.out.println(throwables);
             LOGGER.error(throwables.getMessage());
         }
         return person;
     }
 
+    /**
+     * Returns Person entity by login.
+     *
+     * @param userName login.
+     * @return Person entity.
+     */
     public static Person getUserByLogin(String userName) {
         Person person = null;
         try (Connection con = dbm.getConnection();
-             PreparedStatement pstmt = con.prepareStatement(SELECT_QUERY);
+             PreparedStatement pstmt = con.prepareStatement(SELECT_QUERY)
         ) {
             pstmt.setString(1, userName);
             ResultSet rs = pstmt.executeQuery();
@@ -59,23 +75,9 @@ public class PersonDao {
         return person;
     }
 
-    public static void deletePerson(int[] idList) {
-        int n = idList.length;
-        String QUERY7 = "DELETE FROM PERSON WHERE id IN (" + DBManager.repeat(n - 1, "?,") + "?)";
-        ResultSet rs = null;
-        try (Connection con = dbm.getConnection();
-             PreparedStatement pstmt = con.prepareStatement(QUERY7)) {
-            for (int i = 1; i <= n; i++) {
-                pstmt.setInt(i, idList[i - 1]);
-            }
-            rs = pstmt.executeQuery();
-        } catch (SQLException throwables) {
-            LOGGER.error(throwables.getMessage());
-        } finally {
-            DBManager.close(rs);
-        }
-    }
-
+    /**
+     * Extracts a user from the result set row.
+     */
     private static class UserMapper implements EntityMapper<Person> {
 
         @Override

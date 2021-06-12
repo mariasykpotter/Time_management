@@ -22,6 +22,6 @@ public class ApproveCommand extends Command {
         request.setAttribute("unapproved", unapproved);
         LOGGER.info("Set the request attribute: unapproved --> " + unapproved);
         LOGGER.debug("Command finished");
-        return Path.PAGE__ADMIN;
+        return Path.PAGE_ADMIN;
     }
 }

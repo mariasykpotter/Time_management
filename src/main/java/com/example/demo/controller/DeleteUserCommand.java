@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.Path;
+import com.example.demo.dao.DBManager;
 import com.example.demo.dao.PersonDao;
 import org.apache.log4j.Logger;
 
@@ -19,9 +20,9 @@ public class DeleteUserCommand extends Command {
         LOGGER.debug("Command starts");
         String[] users = request.getParameterValues("users");
         int[] array = Arrays.stream(users).mapToInt(Integer::parseInt).toArray();
-        PersonDao.deletePerson(array);
+        DBManager.deleteEntity("PERSON", array);
         LOGGER.trace("Users removed" + users);
         LOGGER.debug("Command finished");
-        return Path.PAGE__VIEW_USERS;
+        return Path.PAGE_VIEW_USERS;
     }
 }

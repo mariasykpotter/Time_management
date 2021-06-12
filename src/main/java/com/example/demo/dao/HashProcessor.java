@@ -7,9 +7,18 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 
+/**
+ * Class for hashing the password
+ */
 public class HashProcessor {
     private static final int ITERATIONS_NUMBER = 1;
 
+    /**
+     * Generates strong password hash
+     *
+     * @param password password
+     * @return hashed password
+     */
     public static String generateStrongPasswordHash(String password) {
         char[] chars = password.toCharArray();
         byte[] salt = getSalt();
@@ -29,6 +38,11 @@ public class HashProcessor {
         return ITERATIONS_NUMBER + ":" + toHex(salt) + ":" + toHex(hash);
     }
 
+    /**
+     * Generates a salt for hash
+     *
+     * @return array of bytes
+     */
     private static byte[] getSalt() {
         SecureRandom sr = null;
         try {
@@ -41,6 +55,12 @@ public class HashProcessor {
         return salt;
     }
 
+    /**
+     * Turns bytes array to hexadecimal
+     *
+     * @param array  array of bytes
+     * @return hexadecimal string output
+     */
     private static String toHex(byte[] array) {
         BigInteger bi = new BigInteger(1, array);
         String hex = bi.toString(16);
@@ -52,6 +72,13 @@ public class HashProcessor {
         }
     }
 
+    /**
+     * Validates the password.
+     *
+     * @param originalPassword input password.
+     * @param storedPassword stored hashed password.
+     * @return boolean whether the password is true or no.
+     */
     public static boolean validatePassword(String originalPassword, String storedPassword) {
         String[] parts = storedPassword.split(":");
         int iterations = Integer.parseInt(parts[0]);
@@ -79,6 +106,12 @@ public class HashProcessor {
         return diff == 0;
     }
 
+    /**
+     * Turns hexadecimal into array of bytes.
+     *
+     * @param hex String of hex.
+     * @return array of bytes.
+     */
     private static byte[] fromHex(String hex) {
         byte[] bytes = new byte[hex.length() / 2];
         for (int i = 0; i < bytes.length; i++) {
@@ -86,12 +119,4 @@ public class HashProcessor {
         }
         return bytes;
     }
-
-    public static void main(String[] args) {
-        HashProcessor hp = new HashProcessor();
-        String el = hp.generateStrongPasswordHash("1");
-        System.out.println(el);
-        System.out.println(hp.validatePassword("1","1:67e91145be3c24db35342986b1462fff:e777717bbd0835e46dbb2ca957124aa4444330f90bcdf13d152bca2914f1ef47c6264a9f854c61ab0e5aa30ea77030a702d3ce730b245c04ab466be85f1b3439"));
-    }
 }
-

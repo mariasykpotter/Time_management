@@ -1,6 +1,10 @@
 package com.example.demo.dao;
 
+/**
+ * Holder for fields names of DB tables
+ */
 public class Constants {
+    private Constants(){};
     public static final String ENTITY_ID = "id";
 
     public static final String USER_LOGIN = "user_name";

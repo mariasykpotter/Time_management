@@ -42,13 +42,13 @@ public class AddLogCommand extends Command {
             TimeLogDao.addTimeLog(user.getId(), activity.getId(), Time.valueOf(time1), Time.valueOf(time2), TimeLogDao.countDifference(time1, time2));
             logger.info("Time log added");
             logger.debug("Command finished");
-            return Path.PAGE__ACTIVITIES;
+            return Path.PAGE_ACTIVITIES;
         } else {
             logger.info("Error occurred");
-            request.setAttribute("message", MESSAGE);
+            session.setAttribute("message", MESSAGE);
             logger.trace("Set the session attribute: message --> " + MESSAGE);
             logger.debug("Command finished");
-            return Path.PAGE__WRITE_TIMELOG;
+            return Path.PAGE_WRITE_TIMELOG;
         }
     }
 }

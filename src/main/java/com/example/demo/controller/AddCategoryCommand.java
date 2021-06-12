@@ -20,6 +20,6 @@ public class AddCategoryCommand extends Command {
         CategoryDao.addCategory(categoryName);
         LOGGER.trace("Category added -->" + categoryName);
         LOGGER.debug("Command finished");
-        return Path.PAGE__VIEW_CATEGORIES;
+        return Path.PAGE_VIEW_CATEGORIES;
     }
 }

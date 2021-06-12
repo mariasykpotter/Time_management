@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ page import="com.example.demo.dao.ActivitiesDao" %>
+<%@ page import="com.example.demo.dao.ActivityDao" %>
 <%@ page import="com.example.demo.dao.TimeLogDao" %>
 <%@ page import="com.example.demo.model.Approve" %>
 <html>
@@ -55,7 +55,7 @@
             <th><fmt:message key="end" bundle="${bundle}"/></th>
             <th><fmt:message key="duration" bundle="${bundle}"/></th>
             <th><fmt:message key="status" bundle="${bundle}"/></th>
-            <th><fmt:message key="action" bundle="${bundle}"/></th>
+            <th><fmt:message key="action1" bundle="${bundle}"/></th>
         </tr>
         </thead>
         <tbody>
@@ -65,7 +65,7 @@
                     <td><select class="form-select" name="activity">
                         aria-label="Default select example">
                         <option selected>${list.get(0)}</option>
-                        <c:forEach items="${ActivitiesDao.getAllActivitiesWithCategory(\"activity_name\")}"
+                        <c:forEach items="${ActivityDao.getAllActivitiesWithCategory(\"activity_name\")}"
                                    var="activity">
                             <option value="${activity.get(0)}">${activity.get(0)}</option>
                         </c:forEach>
@@ -76,8 +76,7 @@
                     <td><c:out value="${list.get(4)}"/></td>
                     <td><c:out value="${Approve.getStatus(Integer.valueOf(list.get(5)))}"/></td>
                     <td>
-                        <button type="submit" class="btn btn-light"><fmt:message key="edit"
-                                                                                 bundle="${bundle}"/></button>
+                        <button type="submit" class="btn btn-light"><fmt:message key="edit" bundle="${bundle}"/></button>
                         <input type="hidden" value="editTimelog" name="command"/>
                         <input type="hidden" value="${list.get(6)}" name="log_id"/>
                     </td>
